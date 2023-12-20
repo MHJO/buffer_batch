@@ -49,7 +49,8 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def init(self):
         self.btn_input.clicked.connect(lambda : self.open_folder(self.txt_input))
-        self.btn_output.clicked.connect(lambda : self.open_folder(self.txt_output))
+        self.txt_dist.setText("3")
+        # self.btn_output.clicked.connect()
         self.btn_run.clicked.connect(self.buffer_run)
 
 
@@ -64,8 +65,9 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
 
     # batch 수행
     def buffer_run(self):
-        outputPath = self.txt_output.text() +"/output/".format(os.path.basename(self.txt_input.text()))
+        outputPath = os.path.dirname(self.txt_input.text()) + "/output/"
         print (outputPath)
+        self.txt_output.setText(outputPath)
         if os.path.exists(outputPath) != True:
             os.mkdir(outputPath)
         inputPath = self.txt_input.text()

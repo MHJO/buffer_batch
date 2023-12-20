@@ -40,6 +40,9 @@
    </property>
   </widget>
   <widget class="QLineEdit" name="txt_input">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>80</x>
@@ -63,6 +66,9 @@
    </property>
   </widget>
   <widget class="QLineEdit" name="txt_output">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>80</x>
@@ -73,6 +79,9 @@
    </property>
   </widget>
   <widget class="QPushButton" name="btn_output">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>310</x>
