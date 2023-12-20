@@ -23,8 +23,11 @@
 """
 
 import os
+import shutil
 
-from PyQt5.QtWidgets import QFileDialog,QApplication,QMessageBox
+from PyQt5.QtWidgets import (
+    QFileDialog,QApplication,QMessageBox,QListView,QAbstractItemView,QTreeView
+)
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
 
@@ -57,44 +60,74 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
     def open_folder(self, text):
         self.txt_result.setText("")
         try:
-            # fileName,_filter=QFileDialog.getOpenFileNames(self,"Select Shape File",r"","Shapefiles(*.shp)")
-            folder = QFileDialog.getExistingDirectory(self, "Select folder")
-            text.setText(folder)
+            # folder = QFileDialog.getExistingDirectory(self, "Select folder")
+            # text.setText(folder)
+
+            file_dialog = QFileDialog()
+            file_dialog.setFileMode(QFileDialog.DirectoryOnly)
+            file_dialog.setOption(QFileDialog.DontUseNativeDialog, True)
+            # file_view = file_dialog.findChild(QListView, 'listView')
+            # to make it possible to select multiple directories:
+            # if file_view:
+            #    file_view.setSelectionMode(QAbstractItemView.MultiSelection)
+            f_tree_view = file_dialog.findChild(QTreeView)
+            if f_tree_view:
+                f_tree_view.setSelectionMode(QAbstractItemView.MultiSelection)
+
+            if file_dialog.exec():
+                folders = file_dialog.selectedFiles()
+                text.setText(str(folders).replace("[","").replace("]","").replace("'",""))
+                QMessageBox.information(self,"선택폴더","선택된 폴더 : {0}".format(str(folders)))
+
+
         except Exception as e:
             print (e.__str__())
 
     # batch 수행
     def buffer_run(self):
-        outputPath = os.path.dirname(self.txt_input.text()) + "/output/"
-        print (outputPath)
-        self.txt_output.setText(outputPath)
-        if os.path.exists(outputPath) != True:
-            os.mkdir(outputPath)
         inputPath = self.txt_input.text()
-        for layer in (os.listdir(inputPath)):
-            QApplication.processEvents()
-            if os.path.splitext(layer)[1] == ".shp":
-                layer_1 = inputPath + "/" + layer
-                output = outputPath + layer.replace(".shp", "_output.shp")
-                self.txt_result.setText("{0}\n수행중".format(output))
-                parameter = {
-                    'INPUT': layer_1,
-                    'DISSOLVE': False,
-                    'DISTANCE': float(self.txt_dist.text()),
-                    'END_CAP_STYLE': 0,
-                    'JOIN_STYLE': 0,
-                    'MITER_LIMIT': 2,
-                    'SEGMENTS': 5,
-                    'OUTPUT': output
-                }
+        QApplication.processEvents()
+        print (inputPath.split(","))
 
-                try:
-                    result = processing.run('qgis:buffer', parameter)
-                    self.txt_result.setText("{0}\n생성 완료".format(output))
-                except Exception as e:
-                    print (e.__str__())
-                    self.txt_result.setText("")
-                    QMessageBox.warning(self, '오류', e.__str__())
+        for folder in inputPath.split(","):
+            i_folder=folder.strip()
+            outputPath = os.path.dirname(i_folder) + "/{0}_output/".format(os.path.basename(i_folder))
+            print (outputPath)
+            self.txt_output.setText(outputPath)
+            if os.path.exists(outputPath) != True:
+                os.mkdir(outputPath)
+
+            for layer in (os.listdir(i_folder)):
+                if os.path.splitext(layer)[1] == ".shp":
+                    layer_1 = i_folder + "/" + layer
+                    output = outputPath + layer.replace(".shp", "_output.shp")
+                    self.txt_result.setText("{0}\n수행중".format(output))
+
+                    parameter = {
+                        'INPUT': layer_1,
+                        'DISSOLVE': False,
+                        'DISTANCE': float(self.txt_dist.text()),
+                        'END_CAP_STYLE': 0,
+                        'JOIN_STYLE': 0,
+                        'MITER_LIMIT': 2,
+                        'SEGMENTS': 5,
+                        'OUTPUT': output
+                    }
+
+                    try:
+                        result = processing.run('qgis:buffer', parameter)
+                        self.txt_result.setText("{0}\n생성 완료".format(output))
+                        # # cpg 파일 생성 - EUC-KR
+                        # if os.path.splitext(layer)[1] == ".cpg":
+                        #     cpg_file = os.path.dirname(layer_1)
+                        #     print (cpg_file)
+                        #     if os.path.dirname(output).replace("shp","cpg") != True:
+                        #         shutil.copy(cpg_file,os.path.dirname(output).replace("shp","cpg"))
+
+                    except Exception as e:
+                        print (e.__str__())
+                        self.txt_result.setText("")
+                        QMessageBox.warning(self, '오류', e.__str__())
                 
 
 
