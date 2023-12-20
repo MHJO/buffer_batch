@@ -6,7 +6,7 @@
 name=buffer_batch
 qgisMinimumVersion=3.0
 description=buffer_batch
-version=0.1.2
+version=0.1.3
 author=mh
 email=mh.cho058@gmail.com
 
