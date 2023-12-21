@@ -51,6 +51,7 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
         self.init()
 
     def init(self):
+        self.progressBar.setVisible(False)
         self.btn_input.clicked.connect(lambda : self.open_folder(self.txt_input))
         self.txt_dist.setText("3")
         # self.btn_output.clicked.connect()
@@ -129,6 +130,7 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
                     try:
                         result = processing.run('qgis:buffer', parameter)
                         self.txt_result.setText("{0}\n생성 완료".format(output))
+
                         # # cpg 파일 생성 - EUC-KR
                         # if os.path.splitext(layer)[1] == ".cpg":
                         #     cpg_file = os.path.dirname(layer_1)
@@ -140,7 +142,7 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
                         print (e.__str__())
                         self.txt_result.setText("")
                         QMessageBox.warning(self, '오류', e.__str__())
-                
+
 
 
 

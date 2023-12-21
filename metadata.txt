@@ -27,7 +27,7 @@ tags=python
 
 homepage=http://homepage
 category=Vector
-icon=icon.png
+icon=lib/img/gis_tool.png
 # experimental flag
 experimental=True
 
