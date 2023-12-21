@@ -48,16 +48,24 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.init_ui()
         self.init()
 
-    def init(self):
+    def init_ui(self):
         self.progressBar.setVisible(False)
+        self.rdo_batch.setChecked(True)
+        self.lb_input.setText(self.tr("입력 경로"))
+        self.lb_output.setText(self.tr("결과 경로"))
+        self.lb_dist.setText(self.tr("거리값"))
+
+
+    def init(self):
         self.btn_input.clicked.connect(lambda : self.open_folder(self.txt_input))
         self.txt_dist.setText("3")
         # self.btn_output.clicked.connect()
         self.btn_run.clicked.connect(self.buffer_run)
 
-
+    # region [input 경로 선택]
     def open_folder(self, text):
         self.txt_result.setText("")
         try:
@@ -95,6 +103,9 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
 
         except Exception as e:
             print (e.__str__())
+            QMessageBox.warning(self, '오류', e.__str__())
+            
+    # endregion
 
     # batch 수행
     def buffer_run(self):
