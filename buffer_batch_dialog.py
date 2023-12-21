@@ -76,8 +76,20 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
 
             if file_dialog.exec():
                 folders = file_dialog.selectedFiles()
-                text.setText(str(folders).replace("[","").replace("]","").replace("'",""))
-                QMessageBox.information(self,"선택폴더","선택된 폴더 : {0}".format(str(folders)))
+                
+                check_list=list()
+                for i in folders:
+                    print (i,folders[0])
+                    check_list.append(folders[0] in i)
+
+                if len(folders) ==(check_list.count(True)):
+                    folders1 = folders[1:]
+                    print (folders1)
+                else:
+                    folders1= folders
+                    print (folders1)
+                text.setText(str(folders1).replace("[","").replace("]","").replace("'",""))
+                QMessageBox.information(self,"선택폴더","선택된 폴더 : {0}".format(str(folders1)))
 
 
         except Exception as e:
