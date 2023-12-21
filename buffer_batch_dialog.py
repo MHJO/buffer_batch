@@ -63,7 +63,7 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
     def init(self):
         self.btn_input.clicked.connect(lambda : self.open_folder(self.txt_input))
         self.txt_dist.setText("3")
-        # self.btn_output.clicked.connect()
+        self.btn_output.clicked.connect(lambda: self.save_folder(self.txt_output))
         self.btn_run.clicked.connect(self.buffer_run)
         self.rdo_batch.clicked.connect(self.change_init)
         self.rdo_single.clicked.connect(self.change_init)
@@ -72,10 +72,12 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
         if self.rdo_batch.isChecked() ==  True:
             self.lb_input.setText(self.tr("입력 경로"))
             self.lb_output.setText(self.tr("결과 경로"))
-            
+            self.btn_output.setEnabled(False)
         else:
             self.lb_input.setText(self.tr("입력 파일"))
             self.lb_output.setText(self.tr("결과 파일"))
+            self.btn_output.setEnabled(True)
+
             
 
     # region [input 경로 선택]
@@ -121,7 +123,7 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
                 QMessageBox.warning(self, '오류', e.__str__())
         # endregion
         # region [싱글모드 - 단일파일모드]
-        else:
+        elif self.rdo_batch.isChecked() ==  False:
             try:
                 fileName=QFileDialog.getOpenFileName(self,"Select Shape File",r"","Shapefiles(*.shp)")
                 text.setText(fileName[0])
@@ -130,6 +132,15 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
                 QMessageBox.warning(self, '오류', e.__str__())
         # endregion
     # endregion
+
+    def save_folder(self,text):
+        try:
+            folder=QFileDialog.getExistingDirectory(None,"Select folder")
+            text.setText(folder)
+        except Exception as e:
+            print(e.__str__())
+            QMessageBox.warning(self, '오류', e.__str__())
+
 
     # batch 수행
     def buffer_run(self):
@@ -179,8 +190,10 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
                             QMessageBox.warning(self, '오류', e.__str__())
         else:
             input = self.txt_input.text()
-            outputPath = os.path.dirname(input) + "/{0}_output/".format(os.path.basename(input))
-            output = outputPath + os.path.basename(input).replace(".shp", "_output.shp")
+            outputPath = self.txt_output.text() + "/{0}_output/".format(os.path.basename(os.path.dirname(input)))
+            if os.path.exists(outputPath) != True:
+                os.mkdir(outputPath)
+            output = outputPath + os.path.basename(input)
             parameter = {
                 'INPUT': input,
                 'DISSOLVE': False,
