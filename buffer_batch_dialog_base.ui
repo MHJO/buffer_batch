@@ -13,30 +13,30 @@
   <property name="windowTitle">
    <string>buffer_batch</string>
   </property>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="lb_input">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>30</y>
-     <width>56</width>
-     <height>12</height>
+     <width>60</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>입력 파일</string>
+    <string>input path</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="lb_output">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>60</y>
-     <width>56</width>
-     <height>12</height>
+     <width>70</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>결과 경로</string>
+    <string>output path</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="txt_input">
@@ -130,7 +130,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QLabel" name="label_3">
+  <widget class="QLabel" name="lb_dist">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -154,6 +154,32 @@
    </property>
    <property name="value">
     <number>0</number>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="rdo_batch">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>90</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>batch mode</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="rdo_single">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>10</y>
+     <width>90</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>single mode</string>
    </property>
   </widget>
  </widget>
