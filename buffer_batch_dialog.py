@@ -57,6 +57,8 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
         self.lb_input.setText(self.tr("입력 경로"))
         self.lb_output.setText(self.tr("결과 경로"))
         self.lb_dist.setText(self.tr("거리값"))
+        self.txt_input.setText("") # 초기화
+        self.txt_output.setText("") # 초기화
 
 
 
@@ -72,10 +74,14 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
         if self.rdo_batch.isChecked() ==  True:
             self.lb_input.setText(self.tr("입력 경로"))
             self.lb_output.setText(self.tr("결과 경로"))
+            self.txt_input.setText("")  # 초기화
+            self.txt_output.setText("")  # 초기화
             self.btn_output.setEnabled(False)
         else:
             self.lb_input.setText(self.tr("입력 파일"))
             self.lb_output.setText(self.tr("결과 파일"))
+            self.txt_input.setText("")  # 초기화
+            self.txt_output.setText("")  # 초기화
             self.btn_output.setEnabled(True)
 
             
