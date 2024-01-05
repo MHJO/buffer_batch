@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/plugins/buffer_batch" >
         <file>lib/img/gis_tool.png</file>
+        <file>lib/img/buffer.png</file>
+        <file>lib/img/refresh.png</file>
+        <file>lib/img/screenshot2.png</file>
     </qresource>
 </RCC>

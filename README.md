@@ -1,10 +1,14 @@
-# buffer_batch
+# gis_my_tool
 
 ---
 
 #### QGIS Plugin
 
-많은 양의 shape 레이어 buffer 처리를 도와주는 플러그인
+* buffer
+: 많은 양의 shape 레이어 buffer 처리를 도와주는 도구
+
+* screenshot
+: map 영역의 layer를 캡쳐하는 도구
 
 ---
 * latest_version : 0.1.5

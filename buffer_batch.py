@@ -26,9 +26,11 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
 # Initialize Qt resources from file resources.py
-from .resources import *
 # Import the code for the dialog
-from .buffer_batch_dialog import buffer_batchDialog
+from .resources import *
+from .modules import *
+from .modules.buffer_batch_dialog import buffer_batchDialog
+# from .modules.screenshot_dialog import screenshot_Dialog
 import os.path
 
 
@@ -52,7 +54,7 @@ class buffer_batch:
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
-            'buffer_batch_{}.qm'.format(locale))
+            'gis_my_tool_{}.qm'.format(locale))
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -61,7 +63,7 @@ class buffer_batch:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&buffer_batch')
+        self.menu = self.tr(u'&gis_my_tool')
 
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
@@ -80,7 +82,7 @@ class buffer_batch:
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('buffer_batch', message)
+        return QCoreApplication.translate('gis_my_tool', message)
 
 
     def add_action(
@@ -162,11 +164,18 @@ class buffer_batch:
 
         # icon_path = ':/plugins/buffer_batch/icon.png'
         icon_path = ':/plugins/buffer_batch/lib/img/gis_tool.png'
+        buffer_path = ':/plugins/buffer_batch/lib/img/buffer.png'
+        screenshot_path=':/plugins/buffer_batch/lib/img/screenshot2.png'
         self.add_action(
-            icon_path,
-            text=self.tr(u'buffer_batch'),
+            buffer_path,
+            text=self.tr(u'buffer'),
             callback=self.run,
             parent=self.iface.mainWindow())
+        # self.add_action(
+        #     screenshot_path,
+        #     text=self.tr(u'screenshot'),
+        #     callback=self.run_screenshot,
+        #     parent=self.iface.mainWindow())
 
         # will be set False in run()
         self.first_start = True
@@ -176,7 +185,7 @@ class buffer_batch:
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
             self.iface.removePluginVectorMenu(
-                self.tr(u'&buffer_batch'),
+                self.tr(u'&gis_my_tool'),
                 action)
             self.iface.removeToolBarIcon(action)
 
@@ -199,3 +208,22 @@ class buffer_batch:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             pass
+
+    # def run_screenshot(self):
+    #     """Run method that performs all the real work"""
+    #
+    #     # Create the dialog with elements (after translation) and keep reference
+    #     # Only create GUI ONCE in callback, so that it will only load when the plugin is started
+    #     if self.first_start == True:
+    #         self.first_start = False
+    #         self.dlg = screenshot_Dialog()
+    #
+    #     # show the dialog
+    #     self.dlg.show()
+    #     # Run the dialog event loop
+    #     result = self.dlg.exec_()
+    #     # See if OK was pressed
+    #     if result:
+    #         # Do something useful here - delete the line containing pass and
+    #         # substitute with your code.
+    #         pass
