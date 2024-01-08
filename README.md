@@ -4,10 +4,13 @@
 
 #### QGIS Plugin
 
-* buffer
+* buffer ![image](https://github.com/MHJO/buffer_batch/assets/107253765/ae196def-e22d-41d4-a6f5-d3df256be507)
+
+
 : 많은 양의 shape 레이어 buffer 처리를 도와주는 도구
 
-* screenshot
+* screenshot ![image](https://github.com/MHJO/buffer_batch/assets/107253765/25717d9e-d942-44a2-b7cc-af69790b92af)
+
 : map 영역의 layer를 캡쳐하는 도구
 
 ---
