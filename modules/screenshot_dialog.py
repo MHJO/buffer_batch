@@ -34,6 +34,7 @@ from qgis.PyQt import QtWidgets
 
 from qgis import processing
 from qgis.utils import iface
+from qgis.core import QgsFeatureRequest,QgsExpression
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -57,31 +58,55 @@ class screenshot_Dialog(QtWidgets.QDialog, FORM_CLASS):
     def init_ui(self):
         self.lb_layers.setText(self.tr("레이어명"))
         self.lb_attrs.setText(self.tr("속성 선택"))
+        self.cbx_attrs.setVisible(False)
+        self.lb_attrs.setVisible(False)
+        self.rdo_allCap.setChecked(True)
+        self.rdo_attrCap.setChecked(False)
         # self.txt_output.setText("") # 초기화
-        self.btn_refresh.setIcon(QIcon(':refresh'))
+        # self.btn_refresh.setIcon(QIcon(':/plugins/buffer_batch/lib/img/refresh.png'))
+        self.btn_refresh.setIcon(QIcon(':/plugins/buffer_batch/lib/img/refresh.png'))
+        self.progressBar.setVisible(False)
         self.cmbSetting()
+        self.changedSync()
 
     def listener(self):
         self.btn_refresh.clicked.connect(self.mapRefresh)
-        self.changedSync()
+        self.btn_capture.clicked.connect(self.mapCapture)
+        self.rdo_allCap.clicked.connect(self.changedSync)
+        self.rdo_attrCap.clicked.connect(self.changedSync)
 
     def mapRefresh(self):
         self._map_canvas.refresh()
+        self.cbx_layers.clear()
         self.cmbSetting()
 
     def changedSync(self):
-        # combo event
-        self.cbx_layers.currentIndexChanged.connect(self.getAttrs)
-        self.cbx_attrs.currentIndexChanged.connect(self.getAttrValue)
+        # # combo event
+        # self.cbx_layers.currentIndexChanged.connect(self.getAttrs)
+        # self.cbx_attrs.currentIndexChanged.connect(self.getAttrValue)
+        if self.rdo_allCap.isChecked():
+            print (1)
+            self.lb_layers.setVisible(False)
+            self.lb_attrs.setVisible(False)
+            self.lb_func.setVisible(False)
+            self.cbx_layers.setVisible(False)
+            self.txt_func.setVisible(False)
+            self.btn_refresh.setVisible(False)
+        elif self.rdo_attrCap.isChecked():
+            print (2)
+            self.lb_layers.setVisible(True)
+            self.lb_func.setVisible(True)
+            self.cbx_layers.setVisible(True)
+            self.txt_func.setVisible(True)
+            self.btn_refresh.setVisible(True)
 
     def cmbSetting(self):
         # 레이어 목록을 가져옴
         self.getlyr = self.get_lyrList()
         self.cbx_layers.addItems(self.getlyr[0])
-        self.getAttrs()
+        # self.getAttrs()
 
     def get_lyrList(self):
-        self.cbx_layers.clear()
         layersNames = ["선택"]
         layers = list()
         for i in self._map_canvas.layers():
@@ -110,6 +135,49 @@ class screenshot_Dialog(QtWidgets.QDialog, FORM_CLASS):
             attrList.append(feat[self.cbx_attrs.currentText()])
         self.cbx_attrsV.addItems(attrList)
 
+
+    # 화면 캡쳐
+    def mapCapture(self):
+        if self.rdo_allCap.isChecked():
+            folder = QFileDialog.getExistingDirectory(None, "Select folder")
+            if folder =="":
+                return
+            path = folder+"/allCap.png"
+            try:
+                self._map_canvas.saveAsImage(path)
+                QMessageBox.information(None, "Alert", str(path)+"에 저장되었습니다.")
+            except Exception as e:
+                QMessageBox.warning(None, "DEBUG", str(e))
+                return
+
+        elif self.rdo_attrCap.isChecked():
+            folder = QFileDialog.getExistingDirectory(None, "Select folder")
+            try:
+                if self.cbx_layers.currentIndex() != 0:
+                    layers = self.getlyr[1]
+                    print ("currentText : ", self.cbx_layers.currentText())
+                    for layer in layers:
+                        if layer.name() == self.cbx_layers.currentText():
+                            queryStr = self.txt_func.text()
+                            request = QgsFeatureRequest(QgsExpression(queryStr)).setFlags(QgsFeatureRequest.NoGeometry).setSubsetOfAttributes([])
+                            selection = layer.getFeatures(request)
+                            # layer.selectByIds([s.id() for s in selection])
+                            for s in selection:
+                                layer.selectByIds([s.id()])
+                                self._map_canvas.zoomToSelected(layer)
+                                self._map_canvas.refresh()
+
+                                import time
+                                path = folder + "/{}.png".format(str(s.id()))
+                                print (path)
+                                time.sleep(5)
+                                self._map_canvas.saveAsImage(path)
+
+                QMessageBox.information(None, "Alert", str(folder)+"에 저장되었습니다.")
+            except Exception as e:
+                print (str(e))
+                QMessageBox.warning(None, "DEBUG", str(e))
+                return
 
 
 

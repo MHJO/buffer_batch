@@ -68,6 +68,7 @@ class buffer_batch:
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
+        self.second_start = None
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -165,12 +166,13 @@ class buffer_batch:
         # icon_path = ':/plugins/buffer_batch/icon.png'
         icon_path = ':/plugins/buffer_batch/lib/img/gis_tool.png'
         buffer_path = ':/plugins/buffer_batch/lib/img/buffer.png'
-        screenshot_path=':/plugins/buffer_batch/lib/img/screenshot2.png'
+        screenshot_path = ':/plugins/buffer_batch/lib/img/screenshot2.png'
         self.add_action(
             buffer_path,
             text=self.tr(u'buffer'),
             callback=self.run,
             parent=self.iface.mainWindow())
+
         self.add_action(
             screenshot_path,
             text=self.tr(u'screenshot'),
@@ -179,6 +181,7 @@ class buffer_batch:
 
         # will be set False in run()
         self.first_start = True
+        self.second_start = True
 
 
     def unload(self):
@@ -214,14 +217,14 @@ class buffer_batch:
 
         # Create the dialog with elements (after translation) and keep reference
         # Only create GUI ONCE in callback, so that it will only load when the plugin is started
-        if self.first_start == True:
-            self.first_start = False
-            self.dlg = screenshot_Dialog()
+        if self.second_start == True:
+            self.second_start = False
+            self.dlg2 = screenshot_Dialog()
 
         # show the dialog
-        self.dlg.show()
+        self.dlg2.show()
         # Run the dialog event loop
-        result = self.dlg.exec_()
+        result = self.dlg2.exec_()
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and
