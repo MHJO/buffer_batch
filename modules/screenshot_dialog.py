@@ -29,6 +29,7 @@ from PyQt5.QtWidgets import (
     QFileDialog,QApplication,QMessageBox,QListView,QAbstractItemView,QTreeView
 )
 from PyQt5.QtGui import QIcon,QPixmap
+from PyQt5.QtCore import QTimer
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
 
@@ -136,6 +137,9 @@ class screenshot_Dialog(QtWidgets.QDialog, FORM_CLASS):
         self.cbx_attrsV.addItems(attrList)
 
 
+    def saveMap(self,path):
+        self._map_canvas.saveAsImage(path)
+
     # 화면 캡쳐
     def mapCapture(self):
         if self.rdo_allCap.isChecked():
@@ -151,8 +155,11 @@ class screenshot_Dialog(QtWidgets.QDialog, FORM_CLASS):
                 return
 
         elif self.rdo_attrCap.isChecked():
+            self.progressBar.setVisible(True)
             folder = QFileDialog.getExistingDirectory(None, "Select folder")
             try:
+                self.progressBar.setVisible(True)
+                self.progressBar.setValue(0)
                 if self.cbx_layers.currentIndex() != 0:
                     layers = self.getlyr[1]
                     print ("currentText : ", self.cbx_layers.currentText())
@@ -161,8 +168,14 @@ class screenshot_Dialog(QtWidgets.QDialog, FORM_CLASS):
                             queryStr = self.txt_func.text()
                             request = QgsFeatureRequest(QgsExpression(queryStr)).setFlags(QgsFeatureRequest.NoGeometry).setSubsetOfAttributes([])
                             selection = layer.getFeatures(request)
+
+                            selected_features = layer.selectedFeatures()
+                            self.progressBar.setMaximum(len(selected_features))
+
                             # layer.selectByIds([s.id() for s in selection])
+                            cnt = 0
                             for s in selection:
+
                                 layer.selectByIds([s.id()])
                                 self._map_canvas.zoomToSelected(layer)
                                 self._map_canvas.refresh()
@@ -171,7 +184,13 @@ class screenshot_Dialog(QtWidgets.QDialog, FORM_CLASS):
                                 path = folder + "/{}.png".format(str(s.id()))
                                 print (path)
                                 time.sleep(5)
-                                self._map_canvas.saveAsImage(path)
+                                saveMap = self.saveMap(path)
+                                QTimer.singleShot(1000, saveMap)
+
+
+                                cnt += 1
+                                self.progressBar.setValue(cnt)
+
 
                 QMessageBox.information(None, "Alert", str(folder)+"에 저장되었습니다.")
             except Exception as e:
