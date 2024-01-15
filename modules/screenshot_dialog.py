@@ -24,6 +24,7 @@
 
 import os
 import shutil
+from functools import partial
 
 from PyQt5.QtWidgets import (
     QFileDialog,QApplication,QMessageBox,QListView,QAbstractItemView,QTreeView
@@ -175,24 +176,25 @@ class screenshot_Dialog(QtWidgets.QDialog, FORM_CLASS):
                             # layer.selectByIds([s.id() for s in selection])
                             cnt = 0
                             for s in selection:
-
                                 layer.selectByIds([s.id()])
+                                QMessageBox.information(None, "Alert", "{}가 저장되었습니다.".format(str(s.id())))
                                 self._map_canvas.zoomToSelected(layer)
                                 self._map_canvas.refresh()
 
                                 import time
+                                time.sleep(2)
+
                                 path = folder + "/{}.png".format(str(s.id()))
                                 print (path)
-                                time.sleep(5)
-                                saveMap = self.saveMap(path)
-                                QTimer.singleShot(1000, saveMap)
+                                self.saveMap(path)
+                                # QTimer.singleShot(1000 * 5, saveMap)
 
 
                                 cnt += 1
                                 self.progressBar.setValue(cnt)
 
 
-                QMessageBox.information(None, "Alert", str(folder)+"에 저장되었습니다.")
+                QMessageBox.information(None, "Alert", str(folder)+"에 저장이 완료되었습니다.")
             except Exception as e:
                 print (str(e))
                 QMessageBox.warning(None, "DEBUG", str(e))
