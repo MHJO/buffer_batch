@@ -3,14 +3,14 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=buffer_batch
+name=gis_my_tool
 qgisMinimumVersion=3.0
-description=buffer_batch
-version=0.1.5
+description=buffer, screenshot
+version=0.1.6
 author=mh
 email=mh.cho058@gmail.com
 
-about=buffer_batch
+about=buffer, screenshot
 
 tracker=http://bugs
 repository=https://github.com/MHJO/buffer_batch
