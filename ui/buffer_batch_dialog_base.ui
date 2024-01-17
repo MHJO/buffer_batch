@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>217</height>
+    <height>441</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -98,7 +98,7 @@
    <property name="geometry">
     <rect>
      <x>15</x>
-     <y>140</y>
+     <y>360</y>
      <width>361</width>
      <height>51</height>
     </rect>
@@ -147,7 +147,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>190</y>
+     <y>410</y>
      <width>371</width>
      <height>20</height>
     </rect>
@@ -180,6 +180,16 @@
    </property>
    <property name="text">
     <string>single mode</string>
+   </property>
+  </widget>
+  <widget class="QTreeView" name="treeView">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>140</y>
+     <width>381</width>
+     <height>192</height>
+    </rect>
    </property>
   </widget>
  </widget>
