@@ -63,6 +63,7 @@ class screenshot_Dialog(QtWidgets.QDialog, FORM_CLASS):
         self.cbx_attrs.setVisible(False)
         self.lb_attrs.setVisible(False)
         self.rdo_allCap.setChecked(True)
+        self.rdo_attrCap.setVisible(False)
         self.rdo_attrCap.setChecked(False)
         # self.txt_output.setText("") # 초기화
         # self.btn_refresh.setIcon(QIcon(':/plugins/buffer_batch/lib/img/refresh.png'))
@@ -177,7 +178,7 @@ class screenshot_Dialog(QtWidgets.QDialog, FORM_CLASS):
                             cnt = 0
                             for s in selection:
                                 layer.selectByIds([s.id()])
-                                QMessageBox.information(None, "Alert", "{}가 저장되었습니다.".format(str(s.id())))
+                                QMessageBox.information(None, "Alert", "{}가 저장합니다.".format(str(s.id())))
                                 self._map_canvas.zoomToSelected(layer)
                                 self._map_canvas.refresh()
 
