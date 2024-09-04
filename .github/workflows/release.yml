@@ -55,7 +55,8 @@ jobs:
           body: Release notes
           draft: false
           prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}  # GITHUB_TOKEN을 인증에 사용
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload ZIP as release asset
         uses: actions/upload-release-asset@v1
