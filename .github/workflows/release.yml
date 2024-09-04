@@ -18,9 +18,11 @@ jobs:
         with:
           python-version: '3.9'  # Python 버전 설정
 
-      - name: Build project
+      - name: Build plugin
         run: |
-          python setup.py sdist  # 플러그인 빌드, setup.py가 있는 경우
+          mkdir -p build
+          cp -r ./* build/  # 플러그인 파일을 build 폴더로 복사
+          # 필요한 추가적인 빌드 명령어를 여기에 작성
 
       - name: Create ZIP file
         run: |
