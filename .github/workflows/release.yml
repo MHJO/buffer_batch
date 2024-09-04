@@ -3,7 +3,7 @@ name: Create Release
 on:
   push:
     branches:
-      - devlop
+      - develop
 
 jobs:
   create_release:
