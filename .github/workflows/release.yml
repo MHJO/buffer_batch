@@ -18,12 +18,6 @@ jobs:
         with:
           python-version: '3.x'  # 사용할 Python 버전 설정
 
-      - name: Install dependencies
-        run: |
-          # 필요시 의존성 패키지를 설치합니다.
-          # QGIS가 설치된 환경에서 실행이 필요할 수 있습니다.
-          # pip install -r requirements.txt  # 예시
-
       - name: Create ZIP file
         run: |
           mkdir -p build
