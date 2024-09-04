@@ -3,31 +3,32 @@ name: Create Release
 on:
   push:
     branches:
-      - develop  # 푸시할 브랜치 설정을 develop으로 변경
+      - develop  # 푸시할 브랜치 설정
 
 jobs:
   create_release:
-    runs-on: ubuntu-latest  # Ubuntu 환경에서 실행
+    runs-on: ubuntu-latest  # GitHub Actions의 기본 운영 체제
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v3
         with:
-          python-version: '3.9'  # Python 버전 설정
+          python-version: '3.x'  # 사용할 Python 버전 설정
 
-      - name: Build plugin
+      - name: Install dependencies
         run: |
-          mkdir -p build
-          cp -r ./* build/  # 플러그인 파일을 build 폴더로 복사
-          # 필요한 추가적인 빌드 명령어를 여기에 작성
+          # 필요시 의존성 패키지를 설치합니다.
+          # QGIS가 설치된 환경에서 실행이 필요할 수 있습니다.
+          # pip install -r requirements.txt  # 예시
 
       - name: Create ZIP file
         run: |
-          mkdir -p release
-          zip -r release/${{ github.repository }}-${{ env.NEW_TAG }}.zip ./dist  # dist 폴더에 빌드된 파일 압축
+          mkdir -p build
+          cp -r ./* build/  # 플러그인 파일을 build 폴더로 복사
+          zip -r build/plugin.zip build/  # build 폴더의 모든 파일을 ZIP으로 압축
 
       - name: Get latest tag
         id: get_latest_tag
@@ -39,9 +40,7 @@ jobs:
       - name: Increment tag version
         id: increment_tag
         run: |
-          TAG=${{ env.TAG }}
-          VERSION=${TAG#v}
-          IFS='.' read -r -a version <<< "$VERSION"
+          IFS='.' read -r -a version <<< "${{ env.TAG#v}}"
           major=${version[0]}
           minor=${version[1]}
           patch=${version[2]}
@@ -52,7 +51,7 @@ jobs:
 
       - name: Create GitHub Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: gh-actions/create-release@v1
         with:
           tag_name: ${{ env.NEW_TAG }}
           release_name: Release ${{ env.NEW_TAG }}
