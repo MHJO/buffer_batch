@@ -1,22 +1,26 @@
-name: Create Release
+name: Create Release and Upload Asset
 
 on:
   push:
     branches:
-      - develop  # 푸시할 브랜치 설정을 develop으로 변경
+      - develop
 
 jobs:
   create_release:
-    runs-on: ubuntu-latest  # Ubuntu 환경에서 실행
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'
+
       - name: Create ZIP file
         run: |
-          zip -r buffer_batch.zip . -x "*.git*" -x "*.github*" -x "*.github/workflows/*"
-        shell: bash
+          zip -r ${GITHUB_REPOSITORY}-.zip . -x "*.git*" -x "*.github*"
 
       - name: Get latest tag
         id: get_latest_tag
@@ -60,8 +64,8 @@ jobs:
 
             - **Credits**:
               - Thanks to all contributors and testers!
-                draft: false
-                prerelease: false
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -69,8 +73,15 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./buffer_batch.zip
-          asset_name: buffer_batch.zip
+          asset_path: ./${GITHUB_REPOSITORY}-.zip
+          asset_name: ${GITHUB_REPOSITORY}-.zip
           asset_content_type: application/zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload to buffer_batch_plugin repository
+        run: |
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               -H "Accept: application/vnd.github.v3+json" \
+               -X PUT \
+               -T "${GITHUB_REPOSITORY}-.zip" \
+               "https://api.github.com/repos/MHJO/qgis_plugin_repository/contents/buffer_batch_plugin/${{ env.NEW_TAG }}-${{ github.repository }}.zip" \
+               -d '{"message":"Add release ZIP file","content":"$(base64 ${GITHUB_REPOSITORY}-.zip)"}'
