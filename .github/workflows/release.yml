@@ -21,10 +21,12 @@ jobs:
       - name: Create ZIP file
         run: |
           mkdir -p release
-          # 플러그인 파일을 release 폴더로 복사
-          cp -r ./* release/
+          # 현재 작업 디렉토리에서 release 폴더로 복사할 파일들만 지정
+          # 일반적으로 필요한 파일들만 포함하도록 수정 가능
+          find . -maxdepth 1 -type f -exec cp {} release/ \;
           # ZIP 파일 생성
-          zip -r release/${{ github.repository }}-${{ env.NEW_TAG }}.zip release
+          cd release
+          zip -r ../${{ github.repository }}-${{ env.NEW_TAG }}.zip .  # ZIP 파일을 release 폴더 외부에 생성
 
       - name: Get latest tag
         id: get_latest_tag
@@ -59,6 +61,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/${{ github.repository }}-${{ env.NEW_TAG }}.zip
+          asset_path: ./${{ github.repository }}-${{ env.NEW_TAG }}.zip
           asset_name: ${{ github.repository }}-${{ env.NEW_TAG }}.zip
           asset_content_type: application/zip
