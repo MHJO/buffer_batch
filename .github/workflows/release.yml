@@ -21,7 +21,10 @@ jobs:
       - name: Create ZIP file
         run: |
           mkdir -p release
-          zip -r release/${{ github.repository }}-${{ env.NEW_TAG }}.zip ./dist  # dist 폴더에 빌드된 파일 압축
+          # 플러그인 파일을 release 폴더로 복사
+          cp -r ./* release/
+          # ZIP 파일 생성
+          zip -r release/${{ github.repository }}-${{ env.NEW_TAG }}.zip release
 
       - name: Get latest tag
         id: get_latest_tag
