@@ -36,7 +36,7 @@ jobs:
           echo "Latest tag: $TAG"
           echo "TAG=$TAG" >> $GITHUB_ENV
 
-      - name: Increment tag version
+      - name: Increment tag version 
         id: increment_tag
         run: |
           TAG=${{ env.TAG }}
