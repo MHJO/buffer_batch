@@ -44,10 +44,24 @@ jobs:
         uses: actions/create-release@v1
         with:
           tag_name: ${{ env.NEW_TAG }}
-          release_name: Release ${{ env.NEW_TAG }}
-          body: Release notes
-          draft: false
-          prerelease: false
+          release_name: buffer_batch develop-v${{ env.NEW_TAG }}
+          body: |
+            ### Release Notes for ${{ env.NEW_TAG }}
+
+            - **Release Date**: ${{ github.event.head_commit.timestamp }}
+            - **Changes**:
+              - Added new features
+              - Fixed bugs
+              - Improved performance
+
+            - **Installation**:
+              - Download the ZIP file attached to this release.
+              - Follow the installation instructions in the README file.
+
+            - **Credits**:
+              - Thanks to all contributors and testers!
+                draft: false
+                prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
