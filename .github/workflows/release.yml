@@ -3,7 +3,7 @@ name: Create Release
 on:
   push:
     branches:
-      - develop
+      - develop  # 푸시할 브랜치 설정을 develop으로 변경
 
 jobs:
   create_release:
@@ -13,21 +13,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          node-version: '16.x'
+          python-version: '3.9'  # Python 버전 설정
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          pip install -r requirements.txt  # requirements.txt에서 의존성 설치
 
       - name: Build project
-        run: npm run build
+        run: |
+          python setup.py sdist  # 플러그인 빌드, setup.py가 있는 경우
 
       - name: Create ZIP file
         run: |
           mkdir -p release
-          zip -r release/${{ github.repository }}-${{ env.NEW_TAG }}.zip ./build
+          zip -r release/${{ github.repository }}-${{ env.NEW_TAG }}.zip ./dist  # dist 폴더에 빌드된 파일 압축
 
       - name: Get latest tag
         id: get_latest_tag
@@ -36,7 +38,7 @@ jobs:
           echo "Latest tag: $TAG"
           echo "TAG=$TAG" >> $GITHUB_ENV
 
-      - name: Increment tag version 
+      - name: Increment tag version
         id: increment_tag
         run: |
           TAG=${{ env.TAG }}
