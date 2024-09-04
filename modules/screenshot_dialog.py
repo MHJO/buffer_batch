@@ -38,6 +38,8 @@ from qgis import processing
 from qgis.utils import iface
 from qgis.core import QgsFeatureRequest,QgsExpression
 
+# 화면 스크린샷
+
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(os.path.dirname(__file__))+"/ui", 'screenshot_dialog_base.ui'))
