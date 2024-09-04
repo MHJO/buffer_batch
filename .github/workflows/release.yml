@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - develop  # 푸시할 브랜치 설정을 develop으로 변경
-      
-  pull_request:
-    branches:
-      - "**"
 
 jobs:
   create_release:
@@ -45,7 +41,7 @@ jobs:
 
       - name: Create GitHub Release
         id: create_release
-        uses: actions/upload-release-asset@v1
+        uses: actions/create-release@v1
         with:
           tag_name: ${{ env.NEW_TAG }}
           release_name: Release ${{ env.NEW_TAG }}
@@ -53,7 +49,7 @@ jobs:
           draft: false
           prerelease: false
         env:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload ZIP as release asset
         uses: actions/upload-release-asset@v1
@@ -62,3 +58,5 @@ jobs:
           asset_path: ./buffer_batch.zip
           asset_name: buffer_batch.zip
           asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
