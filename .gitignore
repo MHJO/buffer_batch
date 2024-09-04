@@ -1,0 +1,16 @@
+# Bytecode files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Build outputs
+build/
+dist/
+
+# IDE configuration
+.vscode/
+.idea/
+
+
+

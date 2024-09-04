@@ -1,0 +1,64 @@
+name: Create Release
+
+on:
+  push:
+    branches:
+      - develop  # 푸시할 브랜치 설정
+
+jobs:
+  create_release:
+    runs-on: windows-latest  # Windows에서 실행
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'  # Node.js 16.x 설정
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Create ZIP file
+        run: |
+          powershell Compress-Archive -Path build -DestinationPath release/project.zip  # Windows PowerShell 명령어로 ZIP 파일 생성
+
+      - name: Get latest tag
+        id: get_latest_tag
+        run: |
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "Latest tag: $TAG"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Increment tag version
+        id: increment_tag
+        run: |
+          IFS='.' read -r -a version <<< "${{ env.TAG#v}}"
+          major=${version[0]}
+          minor=${version[1]}
+          patch=${version[2]}
+          patch=$((patch + 1))
+          NEW_TAG="v${major}.${minor}.${patch}"
+          echo "New tag: $NEW_TAG"
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: gh-actions/create-release@v1
+        with:
+          tag_name: ${{ env.NEW_TAG }}
+          release_name: Release ${{ env.NEW_TAG }}
+          body: Release notes
+
+      - name: Upload ZIP as release asset
+        uses: gh-actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release/${{ github.repository }}-${{ env.NEW_TAG }}.zip
+          asset_name: ${{ github.repository }}-${{ env.NEW_TAG }}.zip
+          asset_content_type: application/zip
