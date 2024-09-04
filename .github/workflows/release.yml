@@ -13,15 +13,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.x'  # Python 버전 설정
-
       - name: Create ZIP file
         run: |
-          # 필요한 파일만 ZIP으로 압축하기 위해 제외할 파일 패턴을 설정합니다.
-          # 모든 파일을 현재 디렉토리에서 직접 ZIP으로 압축합니다.
           zip -r buffer_batch.zip . -x "*.git*" -x "*.github*" -x "*.github/workflows/*"
         shell: bash
 
@@ -48,7 +41,7 @@ jobs:
 
       - name: Create GitHub Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v2
         with:
           tag_name: ${{ env.NEW_TAG }}
           release_name: Release ${{ env.NEW_TAG }}
