@@ -1,16 +1,16 @@
-name: Create Release
+name: Release for main
 
 on:
   push:
     branches:
-      - develop  # 푸시할 브랜치 설정을 develop으로 변경
+      - master  # 푸시할 브랜치 설정
 
 jobs:
   create_release:
     runs-on: ubuntu-latest  # Ubuntu 환경에서 실행
 
     env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 모든 단계에서 사용할 환경 변수 설정
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 모든 단계에서 사용할 환경 변수 설정
 
     steps:
       - name: Checkout code
@@ -25,6 +25,13 @@ jobs:
           echo "### Release Notes for ${{ env.NEW_TAG }}" > release_notes.md
           git log --oneline ${{ github.event.before }}..${{ github.sha }} | sed 's/^/- /' >> release_notes.md
           cat release_notes.md
+
+      - name: Read release notes
+        id: read_release_notes
+        run: |
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+          cat release_notes.md >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Create ZIP file
         run: |
@@ -48,7 +55,7 @@ jobs:
           minor=${version[1]}
           patch=${version[2]}
           patch=$((patch + 1))
-          NEW_TAG="v${major}.${minor}.${patch}"
+          NEW_TAG="${major}.${minor}.${patch}"
           echo "New tag: $NEW_TAG"
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
 
@@ -67,14 +74,14 @@ jobs:
         uses: actions/create-release@v1
         with:
           tag_name: ${{ env.NEW_TAG }}
-          release_name: buffer_batch develop-${{ env.NEW_TAG }}
+          release_name: buffer_batch-v${{ env.NEW_TAG }}
           body: |
             ### Release Notes for ${{ env.NEW_TAG }}
 
             - **Release Date**: ${{ github.event.head_commit.timestamp }}
 
             - **Changes**:
-              - $(cat release_notes.md)
+              - ${{ env.RELEASE_NOTES }}
 
             - **Installation**:
               - Download the ZIP file attached to this release.
@@ -82,13 +89,12 @@ jobs:
 
             - **Credits**:
               - Thanks to all contributors and testers!
-                draft: false
-                prerelease: false
 
             - **README**:
               - ${{ env.README_CONTENT }}
 
-        
+          draft: false
+          prerelease: false
 
       - name: Upload ZIP as release asset
         uses: actions/upload-release-asset@v1
