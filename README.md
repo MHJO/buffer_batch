@@ -13,9 +13,13 @@
 
 ##### change log
 * 배치모드
-* ![image](https://github.com/MHJO/buffer_batch/assets/107253765/df18868a-fb2e-4221-875d-47e9fa52b7b3)
+* ![image](https://github.com/user-attachments/assets/b1d436b3-9f65-4534-8ce9-426278d38d47)
+
 * 싱글모드
-* ![image](https://github.com/MHJO/buffer_batch/assets/107253765/fa5ec6b0-5061-498d-8a0b-1059381d6d10)
+* ![image](https://github.com/user-attachments/assets/9fdd344a-5781-4783-adc1-31a13dfca323)
+
+* 스크린샷
+* ![image](https://github.com/user-attachments/assets/b7b03c93-74c3-4858-b62f-8b91e85f3b6a)
 
 
 
