@@ -1,4 +1,4 @@
-name: Update Release on README.md Change
+name: Update Existing Release
 
 on:
   push:
@@ -24,6 +24,14 @@ jobs:
           cat README.txt >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
+      - name: Get latest tag
+        id: get_latest_tag
+        run: |
+          # 최신 태그를 가져옴
+          TAG=$(git describe --tags --abbrev=0)
+          echo "Latest tag: $TAG"
+          echo "LATEST_TAG=$TAG" >> $GITHUB_ENV
+
       - name: Find latest release
         id: find_release
         uses: actions/github-script@v6
@@ -33,19 +41,21 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo
             });
-            const latestRelease = releases.find(release => release.tag_name === 'v0.0.1'); // 업데이트할 태그를 지정하세요
-            return latestRelease ? latestRelease.id : null;
-        id: release_id
+            const latestRelease = releases.find(release => release.tag_name === process.env.LATEST_TAG);
+            if (!latestRelease) {
+              throw new Error('Latest release not found');
+            }
+            return latestRelease.id;
 
       - name: Update Release
+        id: update_release
         uses: actions/github-script@v6
-        if: steps.find_release.outputs.result != 'null'
         with:
           script: |
-            const releaseId = ${steps.find_release.outputs.result};
+            const releaseId = '${{ steps.find_release.outputs.result }}';
             await github.rest.repos.updateRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: releaseId,
-              body: `### Updated Release Notes for v0.0.1\n\n${process.env.README_CONTENT}`
+              body: `### Updated Release Notes for ${{ env.LATEST_TAG }}\n\n${process.env.README_CONTENT}`
             });
