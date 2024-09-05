@@ -6,7 +6,7 @@ on:
       - master
     paths-ignore:
       - 'README.md'  # README.md 파일의 변경은 무시
-      - '.gitignore/workflows/*.yml'  # .gitignore/workflows/ 디렉토리 내의 .yml 파일 변경 무시
+      - '**/*.yml'  # .gitignore/workflows/ 디렉토리 내의 .yml 파일 변경 무시
 
 jobs:
   create_release:
