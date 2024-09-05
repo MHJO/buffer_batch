@@ -9,6 +9,9 @@ jobs:
   create_release:
     runs-on: ubuntu-latest  # Ubuntu 환경에서 실행
 
+    env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 모든 단계에서 사용할 환경 변수 설정
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -17,6 +20,7 @@ jobs:
         id: get_changed_files
         run: |
           # 변경된 파일 리스트를 가져옴
+          echo "Getting changed files..."
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} > changed_files.txt
           cat changed_files.txt
 
@@ -82,8 +86,7 @@ jobs:
             - **README**:
               - ${{ env.README_CONTENT }}
 
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
 
       - name: Upload ZIP as release asset
         uses: actions/upload-release-asset@v1
