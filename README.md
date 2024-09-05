@@ -1,4 +1,4 @@
-# gis_my_tool
+# gis_my_tool(buffer_batch)
 
 
 #### QGIS Plugin 
