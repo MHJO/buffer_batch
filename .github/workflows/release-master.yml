@@ -5,6 +5,9 @@ on:
     branches:
       - master  # 푸시할 브랜치 설정
 
+    paths:
+      - '**/*'  # 모든 파일에 대한 변경을 감지
+
 jobs:
   create_release:
     runs-on: ubuntu-latest  # Ubuntu 환경에서 실행
