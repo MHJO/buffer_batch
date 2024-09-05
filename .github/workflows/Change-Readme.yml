@@ -3,7 +3,7 @@ name: Update Existing Release
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - README.md  # README.md 파일이 변경된 경우에만 트리거됨
 
@@ -47,7 +47,7 @@ jobs:
             }
             return latestRelease.id;
 
-      - name: Update Release
+      - name: Update Existing Release
         id: update_release
         uses: actions/github-script@v6
         with:
