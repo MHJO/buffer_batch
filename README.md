@@ -1,6 +1,6 @@
 # gis_my_tool
 
-#### QGIS Plugin
+#### QGIS Plugin 
 
 * buffer ![image](https://github.com/MHJO/buffer_batch/assets/107253765/ae196def-e22d-41d4-a6f5-d3df256be507)
 
