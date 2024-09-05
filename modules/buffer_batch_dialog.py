@@ -55,7 +55,8 @@ class buffer_batchDialog(QtWidgets.QDialog, FORM_CLASS):
         self.init()
 
     def init_ui(self):
-        self.setWindowIcon(QIcon(QPixmap('buffer.png')))
+        _buffer_path = ':/plugins/buffer_batch/lib/img/buffer.png'
+        self.setWindowIcon(QIcon(QPixmap(_buffer_path)))
         self.progressBar.setVisible(False)
         self.rdo_batch.setChecked(True)
         self.lb_input.setText(self.tr("입력 경로"))

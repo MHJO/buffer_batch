@@ -1,0 +1,107 @@
+name: Release for main
+
+on:
+  push:
+    branches:
+      - master  # 푸시할 브랜치 설정
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest  # Ubuntu 환경에서 실행
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 모든 단계에서 사용할 환경 변수 설정
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # 전체 히스토리 가져오기
+
+      - name: Generate release notes
+        id: generate_release_notes
+        run: |
+          # 커밋 메시지에서 변경 사항을 추출
+          echo "### Release Notes for ${{ env.NEW_TAG }}" > release_notes.md
+          git log --oneline ${{ github.event.before }}..${{ github.sha }} | sed 's/^/- /' >> release_notes.md
+          cat release_notes.md
+
+      - name: Read release notes
+        id: read_release_notes
+        run: |
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+          cat release_notes.md >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create ZIP file
+        run: |
+          zip -r buffer_batch.zip . -x "*.git*" -x "*.github*" -x "*.github/workflows/*"
+        shell: bash
+
+      - name: Get latest tag
+        id: get_latest_tag
+        run: |
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "Latest tag: $TAG"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Increment tag version
+        id: increment_tag
+        run: |
+          TAG=${{ env.TAG }}
+          VERSION=${TAG#v}
+          IFS='.' read -r -a version <<< "$VERSION"
+          major=${version[0]}
+          minor=${version[1]}
+          patch=${version[2]}
+          patch=$((patch + 1))
+          NEW_TAG="${major}.${minor}.${patch}"
+          echo "New tag: $NEW_TAG"
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+
+      - name: Read README.md
+        id: read_readme
+        run: |
+          # README.md 파일의 내용을 환경 변수로 저장
+          cat README.md | tr -d '\r' > README.txt
+          # Markdown 형식을 그대로 유지하기 위해 파일 내용 변수에 저장
+          echo "README_CONTENT<<EOF" >> $GITHUB_ENV
+          cat README.txt >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.NEW_TAG }}
+          release_name: buffer_batch-v${{ env.NEW_TAG }}
+          body: |
+            ### Release Notes for ${{ env.NEW_TAG }}
+
+            - **Release Date**: ${{ github.event.head_commit.timestamp }}
+
+            - **Changes**:
+              - ${{ env.RELEASE_NOTES }}
+
+            - **Installation**:
+              - Download the ZIP file attached to this release.
+              - Follow the installation instructions in the README file.
+
+            - **Credits**:
+              - Thanks to all contributors and testers!
+
+            - **README**:
+              - ${{ env.README_CONTENT }}
+
+          draft: false
+          prerelease: false
+
+      - name: Upload ZIP as release asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./buffer_batch.zip
+          asset_name: buffer_batch.zip
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

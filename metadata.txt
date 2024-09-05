@@ -6,7 +6,7 @@
 name=gis_my_tool
 qgisMinimumVersion=3.0
 description=buffer, screenshot
-version=0.1.6
+version=0.1.7
 author=mh
 email=mh.cho058@gmail.com
 
