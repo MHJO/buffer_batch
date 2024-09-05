@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master
-    paths:
-      - '**/*'  # 모든 파일의 변경을 감지
     paths-ignore:
       - 'README.md'  # README.md 파일의 변경은 무시
 
