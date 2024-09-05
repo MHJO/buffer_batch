@@ -3,7 +3,7 @@ name: Update README Release
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - README.md  # README.md 파일이 변경된 경우에만 트리거됨
 
