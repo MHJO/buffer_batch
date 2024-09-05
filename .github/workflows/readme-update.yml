@@ -33,10 +33,10 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo
             });
-            const latestRelease = releases[0];
-            if (!latestRelease) {
+            if (releases.length === 0) {
               throw new Error('No releases found');
             }
+            const latestRelease = releases[0];
             console.log(`Latest release tag: ${latestRelease.tag_name}`);
             return latestRelease.tag_name;
 
@@ -46,13 +46,14 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
+            const latestTag = '${{ steps.get_latest_release_tag.outputs.result }}';
             const { data: releases } = await github.rest.repos.listReleases({
               owner: context.repo.owner,
               repo: context.repo.repo
             });
-            const latestRelease = releases.find(release => release.tag_name === process.env.LATEST_TAG);
+            const latestRelease = releases.find(release => release.tag_name === latestTag);
             if (!latestRelease) {
-              throw new Error('Latest release not found');
+              throw new Error(`Release with tag ${latestTag} not found`);
             }
             return latestRelease.id;
 
