@@ -18,13 +18,13 @@ jobs:
         with:
           fetch-depth: 0  # 전체 히스토리 가져오기
 
-      - name: Get changed files
-        id: get_changed_files
+      - name: Generate release notes
+        id: generate_release_notes
         run: |
-          echo "Getting changed files..."
-          git fetch --prune --unshallow  # 전체 히스토리 가져오기
-          git diff --name-only HEAD^ HEAD > changed_files.txt
-          cat changed_files.txt
+          # 커밋 메시지에서 변경 사항을 추출
+          echo "### Release Notes for ${{ env.NEW_TAG }}" > release_notes.md
+          git log --oneline ${{ github.event.before }}..${{ github.sha }} | sed 's/^/- /' >> release_notes.md
+          cat release_notes.md
 
       - name: Create ZIP file
         run: |
@@ -74,7 +74,7 @@ jobs:
             - **Release Date**: ${{ github.event.head_commit.timestamp }}
 
             - **Changes**:
-              - $(cat changed_files.txt | sed 's/^/- /')
+              - $(cat release_notes.md)
 
             - **Installation**:
               - Download the ZIP file attached to this release.
