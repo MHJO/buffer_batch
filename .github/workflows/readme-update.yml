@@ -24,13 +24,21 @@ jobs:
           cat README.txt >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      - name: Get latest tag
-        id: get_latest_tag
-        run: |
-          # 최신 태그를 가져옴
-          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "No tags found")
-          echo "Latest tag: $TAG"
-          echo "TAG=$TAG" >> $GITHUB_ENV
+      - name: Get latest release tag
+        id: get_latest_release_tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: releases } = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            if (releases.length === 0) {
+              throw new Error('No releases found');
+            }
+            const latestRelease = releases[0];
+            console.log(`Latest release tag: ${latestRelease.tag_name}`);
+            return latestRelease.tag_name;
 
       - name: Find latest release
         id: find_release
