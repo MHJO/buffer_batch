@@ -3,11 +3,9 @@ name: Release for main
 on:
   push:
     branches:
-      - master  # 푸시할 브랜치 설정
-
+      - master
     paths:
-      - '**/*'  # 모든 파일에 대한 변경을 감지
-      
+      - '**/*'  # 모든 파일의 변경을 감지
     paths-ignore:
       - 'README.md'  # README.md 파일의 변경은 무시
 
