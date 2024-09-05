@@ -1,0 +1,51 @@
+name: Update Release on README.md Change
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - README.md  # README.md 파일이 변경된 경우에만 트리거됨
+
+jobs:
+  update_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Read README.md
+        id: read_readme
+        run: |
+          # README.md의 내용을 환경 변수에 저장
+          cat README.md | tr -d '\r' > README.txt
+          echo "README_CONTENT<<EOF" >> $GITHUB_ENV
+          cat README.txt >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Find latest release
+        id: find_release
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: releases } = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            const latestRelease = releases.find(release => release.tag_name === 'v0.0.1'); // 업데이트할 태그를 지정하세요
+            return latestRelease ? latestRelease.id : null;
+        id: release_id
+
+      - name: Update Release
+        uses: actions/github-script@v6
+        if: steps.find_release.outputs.result != 'null'
+        with:
+          script: |
+            const releaseId = ${steps.find_release.outputs.result};
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: releaseId,
+              body: `### Updated Release Notes for v0.0.1\n\n${process.env.README_CONTENT}`
+            });
