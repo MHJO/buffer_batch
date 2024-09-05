@@ -68,7 +68,6 @@ class screenshot_Dialog(QtWidgets.QDialog, FORM_CLASS):
         self.rdo_attrCap.setVisible(False)
         self.rdo_attrCap.setChecked(False)
         # self.txt_output.setText("") # 초기화
-        # self.btn_refresh.setIcon(QIcon(':/plugins/buffer_batch/lib/img/refresh.png'))
         self.btn_refresh.setIcon(QIcon(':/plugins/buffer_batch/lib/img/refresh.png'))
         self.progressBar.setVisible(False)
         self.cmbSetting()

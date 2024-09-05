@@ -1,26 +1,29 @@
-name: Create Release and Upload Asset
+name: Create Release
 
 on:
   push:
     branches:
-      - develop
+      - develop  # 푸시할 브랜치 설정을 develop으로 변경
 
 jobs:
   create_release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Ubuntu 환경에서 실행
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.x'
+      - name: Get changed files
+        id: get_changed_files
+        run: |
+          # 변경된 파일 리스트를 가져옴
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} > changed_files.txt
+          cat changed_files.txt
 
       - name: Create ZIP file
         run: |
-          zip -r ${GITHUB_REPOSITORY}-.zip . -x "*.git*" -x "*.github*"
+          zip -r buffer_batch.zip . -x "*.git*" -x "*.github*" -x "*.github/workflows/*"
+        shell: bash
 
       - name: Get latest tag
         id: get_latest_tag
@@ -43,20 +46,29 @@ jobs:
           echo "New tag: $NEW_TAG"
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
 
+      - name: Read README.md
+        id: read_readme
+        run: |
+          # README.md 파일의 내용을 환경 변수로 저장
+          cat README.md | tr -d '\r' > README.txt
+          # Markdown 형식을 그대로 유지하기 위해 파일 내용 변수에 저장
+          echo "README_CONTENT<<EOF" >> $GITHUB_ENV
+          cat README.txt >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         with:
           tag_name: ${{ env.NEW_TAG }}
-          release_name: buffer_batch develop-v${{ env.NEW_TAG }}
+          release_name: buffer_batch develop-${{ env.NEW_TAG }}
           body: |
             ### Release Notes for ${{ env.NEW_TAG }}
 
             - **Release Date**: ${{ github.event.head_commit.timestamp }}
+
             - **Changes**:
-              - Added new features
-              - Fixed bugs
-              - Improved performance
+              - $(cat changed_files.txt | sed 's/^/- /')
 
             - **Installation**:
               - Download the ZIP file attached to this release.
@@ -64,8 +76,12 @@ jobs:
 
             - **Credits**:
               - Thanks to all contributors and testers!
-          draft: false
-          prerelease: false
+                draft: false
+                prerelease: false
+
+            - **README**:
+              - ${{ env.README_CONTENT }}
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -73,15 +89,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${GITHUB_REPOSITORY}-.zip
-          asset_name: ${GITHUB_REPOSITORY}-.zip
+          asset_path: ./buffer_batch.zip
+          asset_name: buffer_batch.zip
           asset_content_type: application/zip
-
-      - name: Upload to buffer_batch_plugin repository
-        run: |
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-               -H "Accept: application/vnd.github.v3+json" \
-               -X PUT \
-               -T "${GITHUB_REPOSITORY}-.zip" \
-               "https://api.github.com/repos/MHJO/qgis_plugin_repository/contents/buffer_batch_plugin/${{ env.NEW_TAG }}-${{ github.repository }}.zip" \
-               -d '{"message":"Add release ZIP file","content":"$(base64 ${GITHUB_REPOSITORY}-.zip)"}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
