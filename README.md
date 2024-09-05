@@ -13,13 +13,16 @@
 : map 영역의 layer를 캡쳐하는 도구
 
 ##### change log 
+
+** buffer
 * 배치모드
 * ![image](https://github.com/user-attachments/assets/b1d436b3-9f65-4534-8ce9-426278d38d47)
 
 * 싱글모드
 * ![image](https://github.com/user-attachments/assets/9fdd344a-5781-4783-adc1-31a13dfca323)
 
-* 스크린샷
+** 스크린샷
+* 현재 화면 캡쳐
 * ![image](https://github.com/user-attachments/assets/b7b03c93-74c3-4858-b62f-8b91e85f3b6a)
 
 
