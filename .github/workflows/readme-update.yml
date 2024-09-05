@@ -36,6 +36,7 @@ jobs:
             if (releases.length === 0) {
               throw new Error('No releases found');
             }
+            // 최신 릴리스가 첫 번째 요소로 정렬되어 있다고 가정
             const latestRelease = releases[0];
             console.log(`Latest release tag: ${latestRelease.tag_name}`);
             return latestRelease.tag_name;
@@ -45,7 +46,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const latestTag = '${{ steps.get_latest_release_tag.outputs.TAG }}';
+            const latestTag = '${{ steps.get_latest_release_tag.outputs.result }}';
             const { data: releases } = await github.rest.repos.listReleases({
               owner: context.repo.owner,
               repo: context.repo.repo
@@ -62,6 +63,7 @@ jobs:
         with:
           script: |
             const releaseId = '${{ steps.find_release.outputs.result }}';
+            const latestTag = '${{ steps.get_latest_release_tag.outputs.result }}'; // Add this line to access latestTag
             await github.rest.repos.updateRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
