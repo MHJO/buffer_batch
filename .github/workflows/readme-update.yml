@@ -51,9 +51,10 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo
             });
+            console.log('Releases found:', releases.map(release => release.tag_name));
             const latestRelease = releases.find(release => release.tag_name === latestTag);
             if (!latestRelease) {
-              throw new Error(`Release with tag ${latestTag} not found`);
+              throw new Error(`Release with tag "${latestTag}" not found`);
             }
             return latestRelease.id;
 
