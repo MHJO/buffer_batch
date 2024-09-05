@@ -11,7 +11,7 @@
 
 : map 영역의 layer를 캡쳐하는 도구
 
-##### change log
+##### change log 
 * 배치모드
 * ![image](https://github.com/user-attachments/assets/b1d436b3-9f65-4534-8ce9-426278d38d47)
 
