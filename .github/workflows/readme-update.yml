@@ -45,7 +45,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const latestTag = '${{ steps.get_latest_tag.outputs.TAG }}';
+            const latestTag = '${{ steps.get_latest_release_tag.outputs.TAG }}';
             const { data: releases } = await github.rest.repos.listReleases({
               owner: context.repo.owner,
               repo: context.repo.repo
